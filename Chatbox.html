@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Informativo</title>
+    <style>
+      #chatContainer {
+        width: 400px;
+        margin: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+      }
+      #messages {
+        height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        padding: 5px;
+        margin-bottom: 10px;
+        background: white;
+      }
+      .question {
+        color: blue;
+        cursor: pointer;
+        margin: 5px 0;
+      }
+      .question:hover {
+        text-decoration: underline;
+      }
+      .option {
+        display: inline-block;
+        margin: 5px;
+        padding: 5px 10px;
+        background-color: lightgray;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .option:hover {
+        background-color: gray;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="chatContainer">
+      <div id="messages"></div>
+      <input type="text" id="userInput" placeholder="Escribe un mensaje..." />
+      <button onclick="sendMessage()">Enviar</button>
+    </div>
+
+    <script>
+      const respuestas = {
+        "¿Qué es la Dermis Acelular Glicerolizada (DAG)?":
+          "Es un tejido biológico procesado que se obtiene a partir de la piel humana donada. Ha sido sometida a procesos de acelularización (eliminación de células para reducir el riesgo de rechazo inmunológico) y glicerolización (preservación en glicerol para mantener su estructura y funcionalidad). La DAG se utiliza en medicina regenerativa para tratar quemaduras, heridas crónicas y en cirugía reconstructiva.",
+        "¿Cuáles son los componentes de la DAG y cómo se obtiene?":
+          "Está compuesta principalmente por la matriz extracelular de la dermis, que incluye colágeno, elastina y otras proteínas estructurales.<br><br>Se obtiene a través de los siguientes pasos:<br>1. La piel es donada por individuos fallecidos que cumplen con los criterios de selección.<br>2. Se eliminan las células de la piel mediante procesos químicos y enzimáticos, dejando solo la matriz extracelular.<br>3. La matriz acelular se preserva en una solución de glicerol para mantener su integridad y funcionalidad.",
+        "¿En que consisten los procesos de glicerolización y acelularizacion?":
+          "-<strong>Acelularización:</strong> Es un proceso en el que se eliminan las células de la piel donada, dejando solo la matriz extracelular.<br> -<strong>Glicerolización</strong>: Es un método de preservación en el que la matriz acelular se sumerge en una solución de glicerol ",
+        "¿Cuáles son los usos clínicos de la DAG?":
+          "-Reconstrucción de quemaduras<br>-Reparación de heridas crónicas<br>- Cirugía reconstructiva<br>-Cirugía periodontal",
+        "¿En que reparaciones de heridas crónicas?":
+          "Se aplica en úlceras diabéticas o heridas que no cicatrizan, estimulando la formación de nuevo tejido.",
+        "¿Cómo se utiliza en la reconstrucción de quemaduras?":
+          ": Se coloca sobre la zona quemada para promover la regeneración de la piel y reducir la pérdida de líquidos",
+        "¿Cuál es su uso en la cirugía periodontal?":
+          "Ayuda a regenerar encías y tejidos de soporte en pacientes con enfermedades periodontales.",
+        "¿Cuáles son los beneficios?":
+          "-Reduce el riesgo de rechazo inmunológico<br>-Promueve la regeneración tisular.<br>-Es versátil en aplicaciones médicas.",
+        "¿Cuáles son riesgos de la DAG en cada aplicación?":
+          "Posibilidad de infección o reacción alérgica (aunque son poco frecuentes debido a los rigurosos controles de calidad).",
+        "¿Qué papel juegan los bancos de tejidos en la obtención y procesamiento de la DAG?":
+          "Los bancos de tejidos, como el Banco de Tejidos del IDCBIS en Colombia, son responsables de:<br>-Obtención: Recolectar piel de donantes fallecidos que cumplen con los criterios de selección.<br>-Procesamiento: Realizar los procesos de acelularización y glicerolización para preparar la DAG. <br>-Almacenamiento: Preservar los tejidos en condiciones óptimas para su uso clínico <br>-Distribución: Garantizar que los tejidos lleguen a los centros médicos que los necesitan",
+        "¿Cómo es el proceso de donación de piel?":
+          "<br>-Identificación del donante: Personas fallecidas que cumplen con los criterios médicos y legales. <br>-Extracción: La piel se extrae en un ambiente estéril y se envía al banco de tejidos.<br>-Procesamiento: La piel se somete a acelularización y glicerolización para convertirse en DAG.",
+        "¿Qué requisitos se necesitan para ser donante?":
+          "<br>-No tener enfermedades infecciosas como VIH, hepatitis B o C. <br>-No padecer cáncer o enfermedades degenerativas. <br> -Contar con el consentimiento familiar o haber manifestado en vida la voluntad de ser donante.",
+        "¿La donación de piel duele o afecta al donante?":
+          "No, la donación de piel se realiza después del fallecimiento, por lo que no causa dolor ni afecta al donante. Es un acto altruista que puede salvar vidas y mejorar la calidad de vida de muchas personas.",
+        "¿Puedo ser donante de piel en vida?":
+          "No, la donación de piel solo se realiza a partir de donantes fallecidos. Sin embargo, puedes manifestar en vida tu voluntad de ser donante y registrar tu decisión en el <strong>Registro Nacional de Donantes</strong>.",
+      };
+
+      let saludoMostrado = false;
+
+      function sendMessage(userText = null) {
+        const input = document.getElementById("userInput");
+        const messageBox = document.getElementById("messages");
+        let text = userText || input.value.trim();
+
+        if (text === "") return;
+
+        messageBox.innerHTML += `<p><strong>Tú:</strong> ${text}</p>`;
+
+        if (!saludoMostrado && text.toLowerCase().includes("hola")) {
+          saludoMostrado = true;
+          messageBox.innerHTML += `<p><strong>Bot:</strong> ¡Hola! ¿Cómo estás? ¿En qué puedo ayudarte?</p>`;
+          mostrarPreguntas();
+        } else if (respuestas[text]) {
+          messageBox.innerHTML += `<p><strong>Bot:</strong> ${respuestas[text]}</p>`;
+          mostrarOpciones();
+        } else if (text.toLowerCase() === "sí") {
+          mostrarPreguntas();
+        } else if (text.toLowerCase() === "no") {
+          messageBox.innerHTML += `<p><strong>Bot:</strong> Gracias por comunicarte. Si deseas empezar de nuevo, escribe "Hola".</p>`;
+          saludoMostrado = false;
+        } else {
+          messageBox.innerHTML += `<p><strong>Bot:</strong> Lo siento, no entiendo esa pregunta.</p>`;
+        }
+
+        input.value = "";
+        messageBox.scrollTop = messageBox.scrollHeight;
+      }
+
+      function mostrarPreguntas() {
+        const messageBox = document.getElementById("messages");
+        messageBox.innerHTML +=
+          "<p><strong>Bot:</strong> Puedes elegir una de estas preguntas:</p>";
+        Object.keys(respuestas).forEach((pregunta) => {
+          messageBox.innerHTML += `<p class='question' onclick='sendMessage("${pregunta}")'>${pregunta}</p>`;
+        });
+        messageBox.scrollTop = messageBox.scrollHeight;
+      }
+
+      function mostrarOpciones() {
+        const messageBox = document.getElementById("messages");
+        messageBox.innerHTML +=
+          "<p><strong>Bot:</strong> ¿Deseas saber algo más?</p>";
+        messageBox.innerHTML += `<span class='option' onclick='sendMessage("Sí")'>Sí</span>`;
+        messageBox.innerHTML += `<span class='option' onclick='sendMessage("No")'>No</span>`;
+        messageBox.scrollTop = messageBox.scrollHeight;
+      }
+
+      document
+        .getElementById("userInput")
+        .addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            sendMessage();
+          }
+        });
+
+      window.onload = function () {
+        const messageBox = document.getElementById("messages");
+        messageBox.innerHTML += `
+                <div style="background-color: #d1e7fd; padding: 10px; border-radius: 10px; text-align: center;">
+                    <strong>👋 Bienvenidos a nuestro chat informativo.</strong>
+                </div>
+            `;
+      };
+    </script>
+  </body>
+</html>
